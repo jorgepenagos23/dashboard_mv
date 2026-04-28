@@ -4,7 +4,9 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "dev:local": "concurrently \"php artisan serve\" \"vite\"",
+        "dev:network": "concurrently \"php artisan serve --host=192.168.1.64 --port=8000\" \"vite --host 192.168.1.64\""
     },
     "devDependencies": {
         "@inertiajs/vue3": "^2.0.0",
@@ -21,6 +23,7 @@
         "vue": "^3.4.0"
     },
     "dependencies": {
+        "firebase-admin": "^13.7.0",
         "google-auth-library": "^10.6.1"
     }
 }

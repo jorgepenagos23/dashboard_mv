@@ -1,5 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gray-900 text-gray-100 p-8 font-sans pb-24">
+    <div :style="{ backgroundColor: 'var(--app-bg, #111827)', color: 'var(--app-text, #f3f4f6)' }" class="min-h-screen p-8 font-sans pb-24 transition-colors duration-300">
         <header class="mb-8 flex justify-between items-end">
             <div>
                 <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
@@ -24,7 +24,7 @@
         <section class="grid lg:grid-cols-3 gap-6 mb-8">
             
             <!-- Grafico Ventas por Mes -->
-            <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl p-6 relative overflow-hidden">
+            <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border shadow-xl p-6 relative overflow-hidden transition-colors duration-300">
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 blur-3xl rounded-full pointer-events-none"></div>
                 <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
                     <span class="w-1.5 h-6 rounded bg-blue-500"></span> Total Ventas por Mes
@@ -54,7 +54,7 @@
             </div>
 
             <!-- Productos Más Vendidos -->
-            <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl p-6 relative overflow-hidden">
+            <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border shadow-xl p-6 relative overflow-hidden transition-colors duration-300">
                 <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-emerald-600/10 blur-3xl rounded-full pointer-events-none"></div>
                 <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
                     <span class="w-1.5 h-6 rounded bg-emerald-500"></span> Más Vendidos (Top 5)
@@ -81,7 +81,7 @@
             </div>
 
             <!-- Productos Menos Vendidos -->
-            <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl p-6 relative overflow-hidden">
+            <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border shadow-xl p-6 relative overflow-hidden transition-colors duration-300">
                 <div class="absolute top-1/2 left-1/2 w-48 h-48 bg-rose-600/10 -translate-x-1/2 -translate-y-1/2 blur-3xl rounded-full pointer-events-none"></div>
                 <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
                     <span class="w-1.5 h-6 rounded bg-rose-500"></span> Menos Vendidos (Top 5)
@@ -113,7 +113,7 @@
         <main class="grid lg:grid-cols-3 gap-8">
             
             <!-- Lista de Pedidos -->
-            <div class="lg:col-span-2 overflow-hidden rounded-xl border border-gray-800 bg-gray-800/50 shadow-2xl backdrop-blur-sm">
+            <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="lg:col-span-2 overflow-hidden rounded-xl border shadow-2xl backdrop-blur-sm transition-colors duration-300">
                 <div class="p-4 border-b border-gray-700 bg-gray-900/50">
                     <h3 class="font-bold text-lg text-white flex items-center gap-2">
                         <span class="w-2 h-5 rounded bg-indigo-500"></span> Historial de Pedidos
@@ -168,7 +168,7 @@
             </div>
 
             <!-- Detalle del Pedido -->
-            <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl p-6 relative overflow-hidden h-max sticky top-6">
+            <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border shadow-xl p-6 relative overflow-hidden h-max sticky top-6 transition-colors duration-300">
                 <!-- Background decoration -->
                 <div class="absolute -top-24 -right-24 w-48 h-48 bg-indigo-600/20 blur-3xl rounded-full pointer-events-none"></div>
 
@@ -227,7 +227,7 @@
 
         <!-- TAB: SISTEMA (Excel Upload) -->
         <div v-show="activeTab === 'sistema'" class="space-y-8 animate-fade-in-up">
-            <div class="bg-gray-800 rounded-xl border border-gray-700 shadow-xl p-8 relative overflow-hidden">
+            <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border shadow-xl p-8 relative overflow-hidden transition-colors duration-300">
                 <div class="absolute -top-24 -right-24 w-64 h-64 bg-amber-600/20 blur-3xl rounded-full pointer-events-none"></div>
                 <h2 class="text-2xl font-bold mb-4 flex items-center text-white">
                     <span class="bg-gradient-to-b from-amber-400 to-amber-600 w-3 h-8 rounded mr-3"></span> Cargar Histórico Analítico (Excel / CSV)
@@ -257,7 +257,7 @@
             <div v-if="$page.props.flash?.system_analysis" class="grid lg:grid-cols-3 gap-6 animate-fade-in-up transition-all duration-500">
                 
                 <!-- Resumen Financiero -->
-                <div class="bg-gray-800 rounded-xl border border-gray-700 p-8 flex flex-col items-center justify-center text-center shadow-xl">
+                <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border p-8 flex flex-col items-center justify-center text-center shadow-xl transition-colors duration-300">
                     <div class="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-6">
                         <svg class="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
@@ -277,7 +277,7 @@
                 </div>
 
                 <!-- Ventas por Canal -->
-                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-xl relative overflow-hidden">
+                <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border p-6 shadow-xl relative overflow-hidden transition-colors duration-300">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
                     <h4 class="font-bold text-white mb-6 border-b border-gray-700 pb-3 flex items-center gap-2">
                         <span class="w-1.5 h-5 bg-blue-500 rounded"></span> Top Canales de Venta
@@ -296,7 +296,7 @@
                 </div>
 
                 <!-- Ventas por Ejecutivo -->
-                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-xl relative overflow-hidden">
+                <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border p-6 shadow-xl relative overflow-hidden transition-colors duration-300">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full"></div>
                     <h4 class="font-bold text-white mb-6 border-b border-gray-700 pb-3 flex items-center gap-2">
                         <span class="w-1.5 h-5 bg-purple-500 rounded"></span> Top Ejecutivos / Vendedores
@@ -315,7 +315,7 @@
                 </div>
                 
                 <!-- Top Productos Excel -->
-                <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 shadow-xl lg:col-span-3">
+                <div :style="{ backgroundColor: 'var(--app-card, #1f2937)', borderColor: 'var(--app-card, #374151)' }" class="rounded-xl border p-6 shadow-xl lg:col-span-3 transition-colors duration-300">
                     <h4 class="font-bold text-lg text-white mb-6 border-b border-gray-700 pb-3 flex items-center gap-2">
                         <span class="w-2 h-5 bg-teal-500 rounded"></span> Insights: Productos Más Solicitados en Sistema
                     </h4>

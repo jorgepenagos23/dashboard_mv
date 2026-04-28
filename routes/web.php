@@ -12,6 +12,7 @@ Route::get('/', function () {
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'jobs' => \App\Models\JobVacancy::where('is_active', true)->latest()->get(),
     ]);
 });
 
@@ -27,20 +28,31 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/tablas/{table?}', [ExplorerController::class, 'index'])->name('explorer.index');
-    Route::post('/tablas/{table}/update', [ExplorerController::class, 'update'])->name('explorer.update');
     
+    // Rutas de administrador (Edición de BD cruda y Precios/Productos)
+    Route::middleware('admin')->group(function () {
+        Route::post('/tablas/{table}/update', [ExplorerController::class, 'update'])->name('explorer.update');
+        Route::post('/inventario/store', [App\Http\Controllers\InventoryController::class, 'store'])->name('inventario.store');
+        Route::post('/inventario/update-price', [App\Http\Controllers\InventoryController::class, 'updatePrice'])->name('inventario.update_price');
+        Route::post('/inventario/{id}/update-details', [App\Http\Controllers\InventoryController::class, 'updateDetails'])->name('inventario.update_details');
+        Route::delete('/inventario/{id}', [App\Http\Controllers\InventoryController::class, 'destroy'])->name('inventario.destroy');
+        
+        Route::resource('vacantes', App\Http\Controllers\VacancyController::class);
+    });
+
     Route::resource('promociones', App\Http\Controllers\PromocionController::class);
     Route::resource('productos-promociones', App\Http\Controllers\ProductoPromocionController::class)->except(['create', 'show', 'edit', 'index']);
     
     Route::get('/notificaciones', [App\Http\Controllers\NotificationController::class, 'index'])->name('notificaciones.index');
     Route::post('/notificaciones/enviar', [App\Http\Controllers\NotificationController::class, 'send'])->name('notificaciones.send');
     
-        Route::get('/pedidos', [App\Http\Controllers\OrderController::class, 'index'])->name('pedidos.index');
-        Route::post('/pedidos/sistema', [App\Http\Controllers\OrderController::class, 'uploadSystem'])->name('pedidos.upload_system');
+    Route::get('/pedidos', [App\Http\Controllers\OrderController::class, 'index'])->name('pedidos.index');
+    Route::post('/pedidos/sistema', [App\Http\Controllers\OrderController::class, 'uploadSystem'])->name('pedidos.upload_system');
 
-        Route::get('/clientes', [App\Http\Controllers\CustomerController::class, 'index'])->name('clientes.index');
-        Route::get('/inventario', [App\Http\Controllers\InventoryController::class, 'index'])->name('inventario.index');
-        Route::post('/inventario/add-stock', [App\Http\Controllers\InventoryController::class, 'addStock'])->name('inventario.add_stock');
-    });
+    Route::get('/clientes', [App\Http\Controllers\CustomerController::class, 'index'])->name('clientes.index');
+    
+    Route::get('/inventario', [App\Http\Controllers\InventoryController::class, 'index'])->name('inventario.index');
+    Route::post('/inventario/update-stock', [App\Http\Controllers\InventoryController::class, 'updateStock'])->name('inventario.update_stock');
+});
 
     require __DIR__.'/auth.php';

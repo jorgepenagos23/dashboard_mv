@@ -62,7 +62,10 @@ class PromocionController extends Controller
 
     public function destroy(Promocion $promocion)
     {
+        // manually delete related products first to prevent FK violation
+        ProductoPromocion::where('id_promocion', $promocion->id)->delete();
         $promocion->delete();
+        
         return back()->with('success', 'Promoción eliminada exitosamente');
     }
 }

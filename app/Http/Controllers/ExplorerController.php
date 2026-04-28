@@ -16,7 +16,7 @@ class ExplorerController extends Controller
         'productos', 'productos_promociones', 'promocion_regalo_costo0', 'promociones', 'stock'
     ];
 
-    public function index($table = 'cliente')
+    public function index(Request $request, $table = 'cliente')
     {
         if (!in_array($table, $this->allowedTables)) {
             abort(404, 'Tabla no permitida.');
@@ -26,16 +26,29 @@ class ExplorerController extends Controller
         
         // Paginate data, sort by the first column descending to show newest first generally
         $primaryKey = $this->getPrimaryKey($table) ?? $columns[0];
-        $data = DB::connection('mysql')->table($table)
-                  ->orderBy($primaryKey, 'desc')
-                  ->paginate(15);
+        
+        $query = DB::connection('mysql')->table($table);
+
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($columns, $search) {
+                foreach ($columns as $column) {
+                    $q->orWhere($column, 'LIKE', "%{$search}%");
+                }
+            });
+        }
+
+        $data = $query->orderBy($primaryKey, 'desc')
+                  ->paginate(15)
+                  ->withQueryString();
 
         return Inertia::render('Explorer/Index', [
             'currentTable' => $table,
             'tables' => $this->allowedTables,
             'columns' => $columns,
             'tableData' => $data,
-            'primaryKey' => $primaryKey
+            'primaryKey' => $primaryKey,
+            'filters' => $request->only(['search'])
         ]);
     }
 

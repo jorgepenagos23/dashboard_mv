@@ -1,11 +1,43 @@
 <template>
-    <div class="min-h-screen bg-gray-900 text-gray-100 p-8 font-sans">
-        <header class="mb-8">
-            <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-400">
-                Directorio de Clientes
-            </h1>
-            <p class="text-gray-400 mt-2">Administra los usuarios, balances y sus direcciones de entrega.</p>
-        </header>
+    <AuthenticatedLayout>
+        <template #header>
+            <div class="flex items-center gap-4">
+                <img src="/images/logo.png" alt="Company Logo" class="h-10 w-auto object-contain bg-gray-800 p-1 rounded" onerror="this.src='https://via.placeholder.com/150x50?text=LOGO'" />
+                <div>
+                    <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-600">
+                        Directorio de Clientes
+                    </h1>
+                    <p class="text-gray-500 mt-1">Administra los usuarios, balances y sus direcciones de entrega.</p>
+                </div>
+            </div>
+        </template>
+
+        <div class="min-h-screen bg-gray-50 text-gray-800 p-8 font-sans">
+        <div class="mb-6 flex flex-col md:flex-row gap-3">
+            <div class="flex-1 min-w-[200px] relative">
+                <input v-model="searchQuery" @keyup.enter="applySearch" type="text" placeholder="Buscar por código, razón social o denominación..." 
+                       class="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white focus:ring-teal-500 focus:border-teal-500 px-4 py-2.5" />
+            </div>
+            
+            <div class="flex-none w-full md:w-32 relative">
+                <input v-model="rutaFilter" @keyup.enter="applySearch" type="text" placeholder="Ruta..." 
+                       class="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white focus:ring-teal-500 focus:border-teal-500 px-4 py-2.5" title="Filtrar por Ruta Preventa / Reparto" />
+            </div>
+
+            <div class="flex-none w-full md:w-40 relative">
+                <input v-model="ctepfrFilter" @keyup.enter="applySearch" type="text" placeholder="CTEPFR Codigo..." 
+                       class="w-full bg-gray-800 border border-gray-700 rounded-lg text-sm text-white focus:ring-teal-500 focus:border-teal-500 px-4 py-2.5" title="Filtrar por código en direcciones (CTEPFR_CODIGO_K)" />
+            </div>
+
+            <div class="flex gap-2">
+                <button @click="applySearch" class="bg-teal-600 hover:bg-teal-500 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition shadow-lg cursor-pointer h-full whitespace-nowrap">
+                    Buscar
+                </button>
+                <button v-if="searchQuery || rutaFilter || ctepfrFilter" @click="clearSearch" class="bg-gray-700 hover:bg-gray-600 text-gray-300 px-5 py-2.5 rounded-lg text-sm font-medium transition cursor-pointer h-full whitespace-nowrap">
+                    Limpiar
+                </button>
+            </div>
+        </div>
 
         <main class="grid lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 overflow-hidden rounded-xl border border-gray-800 bg-gray-800/50 shadow-2xl backdrop-blur-sm">
@@ -102,15 +134,38 @@
                 </div>
             </div>
         </main>
-    </div>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { router } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 const props = defineProps({
-    clientes: Object
+    clientes: Object,
+    filters: Object
 });
+
+const searchQuery = ref(props.filters?.search || '');
+const rutaFilter = ref(props.filters?.ruta || '');
+const ctepfrFilter = ref(props.filters?.ctepfr_codigo || '');
+
+const applySearch = () => {
+    router.get(route('clientes.index'), { 
+        search: searchQuery.value,
+        ruta: rutaFilter.value,
+        ctepfr_codigo: ctepfrFilter.value,
+    }, { preserveState: true, replace: true, preserveScroll: true });
+};
+
+const clearSearch = () => {
+    searchQuery.value = '';
+    rutaFilter.value = '';
+    ctepfrFilter.value = '';
+    applySearch();
+};
 
 const selectedCliente = ref(null);
 

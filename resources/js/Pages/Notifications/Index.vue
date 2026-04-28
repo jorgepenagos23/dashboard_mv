@@ -19,7 +19,7 @@
                     <br><br>
                     <code class="bg-black/50 px-2 py-1 rounded text-red-200">storage/app/firebase-service-account.json</code>
                     <br><br>
-                    Sin este archivo completo y correcto, los envíos fallarán.
+                    <strong>¡Importante!</strong> Este archivo NO debe ser el <code>google-services.json</code> de la app Android. Debe ser el JSON de <em>Cuentas de Servicio</em> (Service Account Key) que se descarga desde la <a href="https://console.firebase.google.com/project/_/settings/serviceaccounts/adminsdk" target="_blank" class="underline hover:text-red-200">Configuración de Firebase -> Cuentas de Servicio -> "Generar nueva clave privada"</a>.
                 </p>
             </div>
         </div>

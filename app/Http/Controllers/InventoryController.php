@@ -34,28 +34,157 @@ class InventoryController extends Controller
         ]);
     }
 
-    public function addStock(Request $request)
+    public function updateStock(Request $request)
     {
         $request->validate([
             'product_id' => 'required|exists:productos,id',
-            'lugar' => 'required|string|max:20',
-            'cantidad' => 'required|numeric|min:1',
+            'stocks' => 'array',
+            'stocks.*.lugar' => 'required|string|max:20',
+            'stocks.*.cantidad' => 'required|numeric|min:0',
         ]);
 
-        $stock = \App\Models\Stock::firstOrNew([
-            'product_id' => $request->product_id,
-            'lugar' => $request->lugar,
-        ]);
+        $product = Producto::findOrFail($request->product_id);
 
-        $stock->cantidad = ($stock->cantidad ?? 0) + $request->cantidad;
-        $stock->yfr_disponible = ($stock->yfr_disponible ?? 0) + $request->cantidad;
-        $stock->invpro_existencia = ($stock->invpro_existencia ?? 0) + $request->cantidad;
-        
-        $stock->yfr_disponiblepza = $stock->yfr_disponiblepza ?? 0;
-        $stock->invpro_existenciapza = $stock->invpro_existenciapza ?? 0;
+        if ($request->has('stocks')) {
+            foreach ($request->stocks as $stockData) {
+                if (trim($stockData['lugar']) === '') continue;
 
-        $stock->save();
+                $stock = \App\Models\Stock::firstOrNew([
+                    'product_id' => $product->id,
+                    'lugar' => $stockData['lugar'],
+                ]);
+
+                $stock->cantidad = $stockData['cantidad'];
+                $stock->yfr_disponible = $stockData['cantidad'];
+                $stock->invpro_existencia = $stockData['cantidad'];
+                
+                $stock->yfr_disponiblepza = $stock->yfr_disponiblepza ?? 0;
+                $stock->invpro_existenciapza = $stock->invpro_existenciapza ?? 0;
+
+                $stock->save();
+            }
+        }
 
         return redirect()->back();
+    }
+
+    public function updatePrice(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:productos,id',
+            'precio_1' => 'required|numeric|min:0',
+            'extra_prices' => 'array',
+            'extra_prices.*.price_list_id' => 'required|integer',
+            'extra_prices.*.price' => 'required|numeric|min:0',
+        ]);
+
+        $product = Producto::with('prices')->findOrFail($request->product_id);
+        
+        // Update base price
+        $product->precio_1 = $request->precio_1;
+        $product->save();
+
+        // Update extra prices
+        if ($request->has('extra_prices')) {
+            foreach ($request->extra_prices as $extraPriceData) {
+                $priceRecord = $product->prices->where('price_list_id', $extraPriceData['price_list_id'])->first();
+                if ($priceRecord) {
+                    $priceRecord->price = $extraPriceData['price'];
+                    $priceRecord->save();
+                } else {
+                    $product->prices()->create([
+                        'price_list_id' => $extraPriceData['price_list_id'],
+                        'price' => $extraPriceData['price']
+                    ]);
+                }
+            }
+        }
+
+        return redirect()->back();
+    }
+
+    public function updateDetails(Request $request, $id)
+    {
+        $producto = Producto::findOrFail($id);
+
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'sku' => 'required|string|max:100',
+            'foto' => 'nullable|url',
+        ]);
+
+        $producto->nombre = $validated['nombre'];
+        $producto->sku = $validated['sku'];
+        $producto->foto = $validated['foto'] ?? $producto->foto;
+        $producto->save();
+
+        return redirect()->back();
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255',
+            'sku' => 'required|string|max:100|unique:productos,sku',
+            'foto' => 'nullable|url',
+            'precio_1' => 'required|numeric|min:0',
+            'linea_prod_id' => 'nullable|string|max:50',
+            'pround' => 'nullable|string|max:20',
+            'nombre_corto' => 'nullable|string|max:100',
+            'marca_prod_id' => 'nullable|string|max:50',
+            'sublinea_prod_id' => 'nullable|string|max:50',
+            'presentacion_prod_id' => 'nullable|string|max:50',
+            'AAI' => 'nullable|string|max:10',
+            'iva16' => 'nullable|numeric|min:0',
+            'ieps' => 'nullable|numeric|min:0',
+            'vigencia' => 'nullable|date',
+            'proveedor_desc1' => 'nullable|string|max:255',
+            'PRODUC_FACTCONVER3' => 'nullable|numeric',
+            'PRODUC_PZAMINVTA' => 'nullable|integer',
+            'VTAPRE_PRECIO' => 'nullable|numeric',
+            'MULTIMARCA' => 'nullable|string|max:100',
+        ]);
+
+        $producto = new Producto();
+        $producto->nombre = $validated['nombre'];
+        $producto->sku = $validated['sku'];
+        $producto->foto = $validated['foto'] ?? null;
+        $producto->precio_1 = $validated['precio_1'];
+        $producto->linea_prod_id = $validated['linea_prod_id'] ?? null;
+        
+        $producto->pround = $validated['pround'] ?? null;
+        $producto->nombre_corto = $validated['nombre_corto'] ?? null;
+        $producto->marca_prod_id = $validated['marca_prod_id'] ?? null;
+        $producto->sublinea_prod_id = $validated['sublinea_prod_id'] ?? null;
+        $producto->presentacion_prod_id = $validated['presentacion_prod_id'] ?? null;
+        $producto->AAI = $validated['AAI'] ?? '0.00';
+        $producto->iva16 = $validated['iva16'] ?? 0;
+        $producto->ieps = $validated['ieps'] ?? 0;
+        $producto->vigencia = $validated['vigencia'] ?? now();
+        $producto->proveedor_desc1 = $validated['proveedor_desc1'] ?? null;
+        $producto->PRODUC_FACTCONVER3 = $validated['PRODUC_FACTCONVER3'] ?? 0;
+        $producto->PRODUC_PZAMINVTA = $validated['PRODUC_PZAMINVTA'] ?? 1;
+        $producto->VTAPRE_PRECIO = $validated['VTAPRE_PRECIO'] ?? null;
+        $producto->MULTIMARCA = $validated['MULTIMARCA'] ?? null;
+
+        $producto->save();
+
+        return redirect()->back();
+    }
+
+    public function destroy($id)
+    {
+        if (auth()->user()->email !== 'jorgepenagos50@gmail.com') {
+            abort(403, 'Solo el usuario principal puede eliminar productos permanentemente.');
+        }
+
+        $producto = Producto::findOrFail($id);
+        
+        // Delete related records (assuming DB constraints don't cascade, or just to be safe)
+        $producto->stocks()->delete();
+        $producto->prices()->delete();
+        $producto->delete();
+
+        return redirect()->back()->with('success', 'Producto eliminado exitosamente.');
     }
 }

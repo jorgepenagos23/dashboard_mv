@@ -1,13 +1,32 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
+const showAppearanceSettings = ref(false);
+
+const page = usePage();
+import { useTheme } from '@/Composables/useTheme.js';
+
+const { isDark, primaryColor, secondaryColor, textColor, initTheme, setTheme, updateCssVariables } = useTheme();
+
+onMounted(() => {
+    initTheme();
+});
+
+const goBack = () => {
+    if (window.history.length > 2) {
+        window.history.back();
+    } else {
+        // Fallback si no hay historial previo interno
+        window.location.href = route('dashboard');
+    }
+};
 </script>
 
 <template>
@@ -94,6 +113,12 @@ const showingNavigationDropdown = ref(false);
                                         >
                                             Profile
                                         </DropdownLink>
+                                        <button
+                                            @click="showAppearanceSettings = true"
+                                            class="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                        >
+                                            🎨 Apariencia UI
+                                        </button>
                                         <DropdownLink
                                             :href="route('logout')"
                                             method="post"
@@ -220,15 +245,85 @@ const showingNavigationDropdown = ref(false);
                 class="bg-white shadow"
                 v-if="$slots.header"
             >
-                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex items-center justify-between">
                     <slot name="header" />
+                    
+                    <button 
+                        v-if="route().current() !== 'dashboard'"
+                        @click="goBack" 
+                        class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-500 active:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150 shadow-sm"
+                    >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Regresar
+                    </button>
                 </div>
             </header>
 
             <!-- Page Content -->
-            <main>
+            <main :style="{ backgroundColor: 'var(--app-bg)', color: 'var(--app-text)' }" class="min-h-screen">
                 <slot />
             </main>
+        </div>
+
+        <!-- Appearance Settings Modal -->
+        <div v-if="showAppearanceSettings" class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden bg-black/60 backdrop-blur-sm">
+            <div class="relative w-full max-w-md p-4 animate-fade-in-up">
+                <div class="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden text-gray-900">
+                    <div class="flex items-center justify-between p-5 border-b border-gray-100 bg-gray-50">
+                        <h3 class="text-lg font-bold">
+                            Personalizar Apariencia UI
+                        </h3>
+                        <button @click="showAppearanceSettings = false" class="text-gray-400 hover:text-gray-600 rounded-lg text-sm p-2 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Temas Prediseñados</h4>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button @click="setTheme('dark')" class="p-2 border rounded-lg hover:border-indigo-500 hover:shadow transition text-center focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                    <div class="w-full h-8 bg-gray-900 rounded mb-1 border border-gray-700"></div>
+                                    <span class="text-xs font-medium">Oscuro</span>
+                                </button>
+                                <button @click="setTheme('light')" class="p-2 border rounded-lg hover:border-indigo-500 hover:shadow transition text-center focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                    <div class="w-full h-8 bg-gray-100 rounded mb-1 border border-gray-300"></div>
+                                    <span class="text-xs font-medium">Claro</span>
+                                </button>
+                                <button @click="setTheme('blue')" class="p-2 border rounded-lg hover:border-indigo-500 hover:shadow transition text-center focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                    <div class="w-full h-8 bg-slate-900 rounded mb-1 border border-slate-700"></div>
+                                    <span class="text-xs font-medium">Azul System</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-5 space-y-4">
+                            <h4 class="text-sm font-bold text-gray-700 uppercase tracking-wider">Ajuste Manual de Colores</h4>
+                            
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium text-gray-600">Color de Fondo General</label>
+                                <input type="color" v-model="primaryColor" @input="updateCssVariables" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium text-gray-600">Color de Tarjetas / Superficies</label>
+                                <input type="color" v-model="secondaryColor" @input="updateCssVariables" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                            </div>
+                            
+                            <div class="flex items-center justify-between">
+                                <label class="text-sm font-medium text-gray-600">Color de Texto (Contraste)</label>
+                                <input type="color" v-model="textColor" @input="updateCssVariables" class="w-10 h-10 rounded border border-gray-300 cursor-pointer p-0.5">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+                        <button @click="showAppearanceSettings = false" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-medium transition shadow-sm">
+                            Guardar Apariencia
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
