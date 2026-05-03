@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class JobVacancy extends Model
 {
-    protected $connection = 'sqlite_vacancies';
+    protected $connection = 'mysql';
 
     protected $fillable = [
         'title',

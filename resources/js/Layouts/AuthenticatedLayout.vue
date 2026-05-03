@@ -76,6 +76,12 @@ const goBack = () => {
                                 <NavLink :href="route('inventario.index')" :active="route().current('inventario.*')">
                                     Inventario
                                 </NavLink>
+                                <NavLink :href="route('grupos-precio.index')" :active="route().current('grupos-precio.*')">
+                                    Descuentos
+                                </NavLink>
+                                <NavLink :href="route('promociones-clientes.index')" :active="route().current('promociones-clientes.*')">
+                                    Promos Clientes
+                                </NavLink>
                             </div>
                         </div>
 
@@ -206,6 +212,12 @@ const goBack = () => {
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('inventario.index')" :active="route().current('inventario.*')">
                             Inventario
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('grupos-precio.index')" :active="route().current('grupos-precio.*')">
+                            Descuentos
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('promociones-clientes.index')" :active="route().current('promociones-clientes.*')">
+                            Promos Clientes
                         </ResponsiveNavLink>
                     </div>
 

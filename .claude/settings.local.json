@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(composer install *)",
+      "Bash(cp C:/laragon/www/dashboard_mv/.env.example C:/laragon/www/dashboard_mv/.env)",
+      "Bash(php artisan *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Read(//mnt/c/laragon/www/**)",
+      "Read(//c/laragon/www/api-expressmv/**)",
+      "Read(//c/laragon/www/appmv/**)",
+      "Read(//c/laragon/www/appmv/src/**)",
+      "Bash(node -e ' *)",
+      "Bash(node check_descuento.js 12)",
+      "Bash(grep -rl \"localStorage.getItem.*token\\\\|id_promocion.*promo_price\\\\|Bearer \\\\${token}\" \"C:/laragon/www/appmv/src/components/\")",
+      "Bash(grep \"\\\\.vue$\")",
+      "Bash(php get_promociones_schema.php)",
+      "Bash(xargs grep *)",
+      "Bash(php -r ' *)"
+    ]
+  }
+}

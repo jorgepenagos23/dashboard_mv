@@ -53,6 +53,20 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/inventario', [App\Http\Controllers\InventoryController::class, 'index'])->name('inventario.index');
     Route::post('/inventario/update-stock', [App\Http\Controllers\InventoryController::class, 'updateStock'])->name('inventario.update_stock');
+
+    // Acceso de clientes a promociones específicas
+    Route::get('/promociones-clientes', [App\Http\Controllers\PromocionClienteController::class, 'index'])->name('promociones-clientes.index');
+    Route::post('/promociones-clientes/asignar', [App\Http\Controllers\PromocionClienteController::class, 'asignar'])->name('promociones-clientes.asignar');
+    Route::delete('/promociones-clientes/remover/{id}', [App\Http\Controllers\PromocionClienteController::class, 'remover'])->name('promociones-clientes.remover');
+    Route::patch('/promociones-clientes/restringir/{promocion}', [App\Http\Controllers\PromocionClienteController::class, 'toggleRestringida'])->name('promociones-clientes.restringir');
+
+    // Grupos de precio y reglas de descuento
+    Route::get('/grupos-precio', [App\Http\Controllers\GrupoPrecioController::class, 'index'])->name('grupos-precio.index');
+    Route::put('/grupos-precio/reglas/{grupo}', [App\Http\Controllers\GrupoPrecioController::class, 'updateRegla'])->name('grupos-precio.update-regla');
+    Route::post('/grupos-precio/asignar', [App\Http\Controllers\GrupoPrecioController::class, 'asignarGrupo'])->name('grupos-precio.asignar');
+    Route::delete('/grupos-precio/remover/{idCliente}', [App\Http\Controllers\GrupoPrecioController::class, 'removerGrupo'])->name('grupos-precio.remover');
+    Route::patch('/grupos-precio/porcentaje/{promocion}', [App\Http\Controllers\GrupoPrecioController::class, 'updatePorcentaje'])->name('grupos-precio.porcentaje');
+    Route::post('/grupos-precio/crear', [App\Http\Controllers\GrupoPrecioController::class, 'crearGrupo'])->name('grupos-precio.crear');
 });
 
     require __DIR__.'/auth.php';
