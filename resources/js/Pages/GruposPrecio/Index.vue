@@ -494,9 +494,7 @@ import { router, Link } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import TagInput from '@/Components/TagInput.vue';
 
-defineOptions({ layout: AuthenticatedLayout });
-
-const props = defineProps({
+ const props = defineProps({
     grupos:            Array,
     reglas:            Array,
     clientesConGrupo:  Object,

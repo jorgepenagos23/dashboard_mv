@@ -24,6 +24,7 @@
     },
     "dependencies": {
         "firebase-admin": "^13.7.0",
-        "google-auth-library": "^10.6.1"
+        "google-auth-library": "^10.6.1",
+        "install": "^0.13.0"
     }
 }
